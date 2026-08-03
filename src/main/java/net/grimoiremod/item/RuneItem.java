@@ -1,5 +1,7 @@
 package net.grimoiremod.item;
 
+import net.grimoiremod.entity.ModEntityTypes;
+import net.grimoiremod.entity.WraithEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -26,7 +28,8 @@ public class RuneItem extends Item {
     public enum RuneType {
         FIRE,
         ICE,
-        LIGHTNING
+        LIGHTNING,
+        CURSE
     }
 
     private final RuneType type;
@@ -48,6 +51,7 @@ public class RuneItem extends Item {
                 case FIRE -> castFire(level, player);
                 case ICE -> castIce(level, player);
                 case LIGHTNING -> castLightning(level, player);
+                case CURSE -> castCurse(level, player);
             }
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
@@ -86,4 +90,24 @@ public class RuneItem extends Item {
             level.addFreshEntity(lightning);
         }
     }
+
+    private void castCurse(Level level, Player player) {
+        // Find the nearest living creature (excluding the caster) to hand off as a target.
+        LivingEntity target = level.getEntitiesOfClass(
+                        LivingEntity.class, player.getBoundingBox().inflate(8.0), e -> e != player)
+                .stream().findFirst().orElse(null);
+
+        Vec3 look = player.getLookAngle();
+        Vec3 spawnPos = player.position().add(look.x * 2, 0, look.z * 2);
+
+        WraithEntity wraith = ModEntityTypes.WRAITH.get().create(level);
+        if (wraith != null) {
+            wraith.moveTo(spawnPos.x, player.getY(), spawnPos.z, player.getYRot(), 0.0F);
+            if (target != null) {
+                wraith.setInitialTarget(target);
+            }
+            level.addFreshEntity(wraith);
+        }
+    }
+}
 }
