@@ -32,6 +32,7 @@ public class GrimoireMod {
 
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
+        net.grimoiremod.entity.ModEntityTypes.ENTITY_TYPES.register(modEventBus);
 
         LOGGER.info("Grimoire mod initializing - runes and spells loading");
     }
