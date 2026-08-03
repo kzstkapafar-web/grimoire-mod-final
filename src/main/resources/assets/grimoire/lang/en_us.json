@@ -2,6 +2,8 @@
   "item.grimoire.rune_fire": "Rune of Fire",
   "item.grimoire.rune_ice": "Rune of Ice",
   "item.grimoire.rune_lightning": "Rune of Lightning",
+  "item.grimoire.rune_curse": "Rune of Curse",
   "item.grimoire.grimoire_book": "Grimoire",
-  "creativetab.grimoire": "Grimoire: Magic"
+  "creativetab.grimoire": "Grimoire: Magic",
+  "entity.grimoire.wraith": "Wraith"
 }
