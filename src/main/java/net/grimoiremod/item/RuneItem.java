@@ -64,8 +64,10 @@ public class RuneItem extends Item {
 
     private void castFire(Level level, Player player) {
         Vec3 look = player.getLookAngle();
-        SmallFireball fireball = new SmallFireball(level, player, look.x, look.y, look.z);
-        fireball.setPos(player.getX() + look.x, player.getEyeY(), player.getZ() + look.z);
+        SmallFireball fireball = new SmallFireball(level,
+                player.getX() + look.x, player.getEyeY(), player.getZ() + look.z,
+                look.x, look.y, look.z);
+        fireball.setOwner(player);
         level.addFreshEntity(fireball);
     }
 
