@@ -1,25 +1,25 @@
 modLoader="javafml"
-loaderVersion="${loader_version_range}"
-license="${mod_license}"
+loaderVersion="[47,)"
+license="MIT"
 issueTrackerURL="https://github.com/yourname/grimoire-mod/issues"
 
 [[mods]]
-modId="${mod_id}"
-version="${mod_version}"
-displayName="${mod_name}"
-authors="${mod_authors}"
-description='''${mod_description}'''
+modId="grimoire"
+version="1.0.0"
+displayName="Grimoire: Path of the Spellcaster"
+authors="YourName"
+description='''A magic mod adding runes, spells, and a grimoire to combine them.'''
 
-[[dependencies.${mod_id}]]
+[[dependencies.grimoire]]
     modId="forge"
     mandatory=true
-    versionRange="${forge_version_range}"
+    versionRange="[61,)"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.${mod_id}]]
+[[dependencies.grimoire]]
     modId="minecraft"
     mandatory=true
-    versionRange="${minecraft_version_range}"
+    versionRange="[1.21.11,1.21.12)"
     ordering="NONE"
     side="BOTH"
