@@ -2,7 +2,7 @@ package net.grimoiremod;
 
 import net.grimoiremod.item.ModCreativeTabs;
 import net.grimoiremod.item.ModItems;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
@@ -26,11 +26,13 @@ public class GrimoireMod {
     public static final String MODID = "grimoire";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
-    public GrimoireMod() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public GrimoireMod(FMLJavaModLoadingContext context) {
+        // Forge 61.x uses EventBus 7: the mod event bus is now a BusGroup,
+        // obtained from the context instead of FMLJavaModLoadingContext.get().getModEventBus().
+        BusGroup modBusGroup = context.getModBusGroup();
 
-        ModItems.ITEMS.register(modEventBus);
-        ModCreativeTabs.TABS.register(modEventBus);
+        ModItems.ITEMS.register(modBusGroup);
+        ModCreativeTabs.TABS.register(modBusGroup);
 
         LOGGER.info("Grimoire mod initializing - runes and spells loading");
     }
