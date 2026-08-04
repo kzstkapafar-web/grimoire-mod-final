@@ -1,15 +1,15 @@
 package net.grimoiremod.item;
 
 import net.grimoiremod.GrimoireMod;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraft.core.registries.Registries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ModCreativeTabs {
 
-public static final DeferredRegister<CreativeModeTab> TABS =
+    public static final DeferredRegister<CreativeModeTab> TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, GrimoireMod.MODID);
 
     public static final RegistryObject<CreativeModeTab> GRIMOIRE_TAB = TABS.register("grimoire_tab",
@@ -20,6 +20,7 @@ public static final DeferredRegister<CreativeModeTab> TABS =
                         output.accept(ModItems.RUNE_FIRE.get());
                         output.accept(ModItems.RUNE_ICE.get());
                         output.accept(ModItems.RUNE_LIGHTNING.get());
+                        output.accept(ModItems.RUNE_CURSE.get());
                         output.accept(ModItems.GRIMOIRE_BOOK.get());
                     })
                     .build());
