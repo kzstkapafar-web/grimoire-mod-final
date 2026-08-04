@@ -5,14 +5,15 @@ import net.grimoiremod.entity.WraithEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -44,8 +45,9 @@ public class RuneItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+
         if (!level.isClientSide()) {
             switch (type) {
                 case FIRE -> castFire(level, player);
@@ -53,13 +55,16 @@ public class RuneItem extends Item {
                 case LIGHTNING -> castLightning(level, player);
                 case CURSE -> castCurse(level, player);
             }
+
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
+
             level.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL,
                     SoundSource.PLAYERS, 1.0F, 1.0F);
         }
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 
     private void castFire(Level level, Player player) {
@@ -72,8 +77,8 @@ public class RuneItem extends Item {
     private void castIce(Level level, Player player) {
         for (LivingEntity target : level.getEntitiesOfClass(
                 LivingEntity.class, player.getBoundingBox().inflate(5.0), e -> e != player)) {
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 2));
-            target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 200, 1));
+            target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 200, 2));
+            target.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 200, 1));
         }
     }
 
@@ -81,10 +86,12 @@ public class RuneItem extends Item {
         LivingEntity target = level.getEntitiesOfClass(
                         LivingEntity.class, player.getBoundingBox().inflate(8.0), e -> e != player)
                 .stream().findFirst().orElse(null);
+
         Vec3 pos = target != null
                 ? target.position()
                 : player.position().add(player.getLookAngle().scale(5));
-        LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level);
+
+        LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
         if (lightning != null) {
             lightning.setPos(pos.x, pos.y, pos.z);
             level.addFreshEntity(lightning);
@@ -100,14 +107,14 @@ public class RuneItem extends Item {
         Vec3 look = player.getLookAngle();
         Vec3 spawnPos = player.position().add(look.x * 2, 0, look.z * 2);
 
-        WraithEntity wraith = ModEntityTypes.WRAITH.get().create(level);
+        WraithEntity wraith = ModEntityTypes.WRAITH.get().create(level, EntitySpawnReason.TRIGGERED);
         if (wraith != null) {
-            wraith.moveTo(spawnPos.x, player.getY(), spawnPos.z, player.getYRot(), 0.0F);
+            wraith.setPos(spawnPos.x, player.getY(), spawnPos.z);
+            wraith.setYRot(player.getYRot());
             if (target != null) {
                 wraith.setInitialTarget(target);
             }
             level.addFreshEntity(wraith);
         }
     }
-}
 }
