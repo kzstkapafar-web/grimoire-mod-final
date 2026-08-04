@@ -1,8 +1,11 @@
 package net.grimoiremod;
 
+import net.grimoiremod.entity.ModEntityTypes;
+import net.grimoiremod.entity.WraithEntity;
 import net.grimoiremod.item.ModCreativeTabs;
 import net.grimoiremod.item.ModItems;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
@@ -12,28 +15,31 @@ import org.slf4j.LoggerFactory;
  * Grimoire: Path of the Spellcaster
  * <p>
  * A magic mod built around runes that can be combined to create spells.
- * This is a starter scaffold: three basic runes (Fire, Ice, Lightning)
- * and a Grimoire book item are already registered and functional.
- * <p>
- * Next steps you can build on top of this:
- * - Add a mana resource (capability) so runes cost mana to use.
- * - Add a custom GUI screen for the Grimoire to combine runes into spells.
- * - Add a Staff item that casts whatever spell is stored in the Grimoire.
+ * Fire, Ice, Lightning and Curse runes are registered and functional,
+ * plus a Grimoire book item.
  */
 @Mod(GrimoireMod.MODID)
 public class GrimoireMod {
+
     public static final String MODID = "grimoire";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
-    public GrimoireMod() {
-        // Forge 52.x (MC 1.21.1) uses the classic EventBus 6 API:
-        // the mod event bus is obtained via FMLJavaModLoadingContext.get().getModEventBus().
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public GrimoireMod(FMLJavaModLoadingContext context) {
+        // Forge 61.x (MC 1.21.11) uses EventBus 7: the mod event bus is now a
+        // BusGroup, obtained from the context instead of the old
+        // FMLJavaModLoadingContext.get().getModEventBus().
+        BusGroup modBusGroup = context.getModBusGroup();
 
-        ModItems.ITEMS.register(modEventBus);
-        ModCreativeTabs.TABS.register(modEventBus);
-        net.grimoiremod.entity.ModEntityTypes.ENTITY_TYPES.register(modEventBus);
+        ModItems.ITEMS.register(modBusGroup);
+        ModCreativeTabs.TABS.register(modBusGroup);
+        ModEntityTypes.ENTITY_TYPES.register(modBusGroup);
+
+        EntityAttributeCreationEvent.getBus(modBusGroup).addListener(this::registerAttributes);
 
         LOGGER.info("Grimoire mod initializing - runes and spells loading");
+    }
+
+    private void registerAttributes(EntityAttributeCreationEvent event) {
+        event.put(ModEntityTypes.WRAITH.get(), WraithEntity.createAttributes().build());
     }
 }
