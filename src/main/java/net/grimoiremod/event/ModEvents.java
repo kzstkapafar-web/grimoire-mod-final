@@ -3,6 +3,7 @@ package net.grimoiremod.event;
 import net.grimoiremod.GrimoireMod;
 import net.grimoiremod.entity.ModEntityTypes;
 import net.grimoiremod.entity.WraithEntity;
+import net.grimoiremod.entity.client.NecromancerModel;
 import net.grimoiremod.entity.client.WraithRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -25,6 +26,11 @@ public class ModEvents {
         @SubscribeEvent
         public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntityTypes.WRAITH.get(), WraithRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(NecromancerModel.LAYER_LOCATION, NecromancerModel::createBodyLayer);
         }
     }
 }
